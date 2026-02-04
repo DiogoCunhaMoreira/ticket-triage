@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-001",
+  "title": "Botão 'Pay now' fica desativado no Safari após preencher formulário",
+  "description": "No Safari 16.6 (macOS), o botão de pagamento continua disabled mesmo com todos os campos preenchidos. No Chrome funciona. Começou 'ontem' segundo CS.",
+  "reported_by": "customer-support",
+  "environment": { "browser": "Safari 16.6", "os": "macOS", "device": "Desktop" },
+  "severity_hint": "high",
+  "attachments": ["screen_recording.mov"],
+  "created_at": "2026-01-25T10:20:00Z"
+}
