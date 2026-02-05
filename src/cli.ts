@@ -4,7 +4,7 @@ import { triageTicket } from "./triage.js";
 async function main() {
   const file = process.argv[2];
   if (!file) {
-    console.error("Usage: npx ts-node src/cli.ts data/tickets/TCK-001.json");
+    console.error("Usage: npx tsx src/cli.ts data/tickets/TCK-001.json");
     process.exit(1);
   }
 
