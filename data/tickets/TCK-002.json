@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-002",
+  "title": "Layout do header cobre o conteúdo em 1366x768",
+  "description": "Em laptops 1366x768, o header fixo está a sobrepor o conteúdo e impede clicar nos primeiros elementos. Acontece no Chrome e Edge.",
+  "reported_by": "qa",
+  "environment": { "browser": "Chrome 121", "os": "Windows 11", "device": "Laptop" },
+  "severity_hint": "medium",
+  "attachments": ["screenshot.png"],
+  "created_at": "2026-01-24T14:05:00Z"
+}

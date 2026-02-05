@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-003",
+  "title": "Erro 'Cannot read properties of undefined' ao abrir página de Perfil",
+  "description": "Alguns utilizadores reportam crash ao abrir /profile. Só vemos a mensagem no console: 'Cannot read properties of undefined (reading \"name\")'.",
+  "reported_by": "support",
+  "environment": { "browser": "Chrome 120", "os": "macOS", "device": "Desktop" },
+  "severity_hint": "high",
+  "attachments": [],
+  "created_at": "2026-01-26T09:12:00Z"
+}

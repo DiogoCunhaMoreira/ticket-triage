@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-008",
+  "title": "Logout automático ao refresh — sessão perde-se",
+  "description": "Ao fazer refresh numa página autenticada, volta para login. Parece problema de cookies/SameSite. Não sabemos se é só Safari.",
+  "reported_by": "support",
+  "environment": { "browser": "Safari 16", "os": "macOS", "device": "Desktop" },
+  "severity_hint": "high",
+  "attachments": [],
+  "created_at": "2026-01-21T08:45:00Z"
+}

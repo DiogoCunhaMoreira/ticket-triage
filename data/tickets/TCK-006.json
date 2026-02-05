@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-006",
+  "title": "Validação de email aceita 'a@' e falha depois no submit",
+  "description": "O formulário deixa avançar com 'a@'. Só no submit aparece erro genérico. Esperado: bloquear e mostrar mensagem inline.",
+  "reported_by": "qa",
+  "environment": { "browser": "Firefox 122", "os": "Windows 10", "device": "Desktop" },
+  "severity_hint": "low",
+  "attachments": [],
+  "created_at": "2026-01-22T10:10:00Z"
+}
