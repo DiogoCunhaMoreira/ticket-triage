@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-004",
+  "title": "LCP acima de 4s na landing principal (regressão)",
+  "description": "PageSpeed piorou e LCP está ~4.5s na homepage. Suspeita de regressão após alterações no hero. Não temos HAR nem screenshots ainda.",
+  "reported_by": "product",
+  "environment": { "browser": "Chrome", "os": "varios", "device": "Mobile" },
+  "severity_hint": "medium",
+  "attachments": [],
+  "created_at": "2026-01-23T16:40:00Z"
+}

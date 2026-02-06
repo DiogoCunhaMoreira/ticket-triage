@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-010",
+  "title": "Feature flag: componente novo aparece para utilizadores errados",
+  "description": "O novo banner experimental aparece para utilizadores que não deviam estar no rollout. Suspeita: avaliação de flag no frontend.",
+  "reported_by": "growth",
+  "environment": { "browser": "Chrome", "os": "varios", "device": "varios" },
+  "severity_hint": "medium",
+  "attachments": ["screenshot.png"],
+  "created_at": "2026-01-28T17:05:00Z"
+}

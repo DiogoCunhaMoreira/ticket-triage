@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-009",
+  "title": "Acessibilidade: foco perde-se ao fechar modal (tab trap)",
+  "description": "Ao fechar o modal, o foco não volta ao botão que o abriu. Teclado fica preso e tab não funciona corretamente.",
+  "reported_by": "design",
+  "environment": { "browser": "Chrome", "os": "macOS", "device": "Desktop" },
+  "severity_hint": "low",
+  "attachments": ["a11y_notes.md"],
+  "created_at": "2026-01-19T13:00:00Z"
+}

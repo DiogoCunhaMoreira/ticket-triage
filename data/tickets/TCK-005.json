@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-005",
+  "title": "Modal 3DS não abre no iPhone — checkout bloqueado",
+  "description": "Em iPhone (Safari), ao confirmar pagamento, fica um spinner infinito e o modal 3DS nunca aparece. Resultado: não conseguem pagar.",
+  "reported_by": "customer-support",
+  "environment": { "browser": "Safari iOS 17", "os": "iOS 17", "device": "iPhone" },
+  "severity_hint": "critical",
+  "attachments": ["video.mp4"],
+  "created_at": "2026-01-27T11:30:00Z"
+}

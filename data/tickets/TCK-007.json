@@ -1,0 +1,10 @@
+{
+  "ticket_id": "TCK-007",
+  "title": "Resultados de pesquisa duplicam ao aplicar filtros e voltar atrás",
+  "description": "Aplicar filtro, abrir detalhe, voltar atrás: lista aparece duplicada e scroll fica estranho. Parece bug de cache/estado no frontend.",
+  "reported_by": "product",
+  "environment": { "browser": "Chrome 121", "os": "macOS", "device": "Desktop" },
+  "severity_hint": "medium",
+  "attachments": ["steps.txt"],
+  "created_at": "2026-01-20T15:55:00Z"
+}
