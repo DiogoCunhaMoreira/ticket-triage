@@ -113,17 +113,24 @@ REQUIREMENTS:
    3-5 steps maximum
 
 CRITICAL:
-- Use descriptive BULLET POINTS only (no code blocks, no code snippets)
-- Body must be Markdown formatted
+- DO NOT wrap the output in markdown code blocks (no ``` markers)
+- Return ONLY the title on the first line, followed by the body
+- Use descriptive BULLET POINTS only (no code blocks, no code snippets in the body)
+- Body must be Markdown formatted with ## headers
 - Be professional and concise
 - Focus on what changed and why, not how (high-level)
 
-Generate the PR description now in valid Markdown:`;
+OUTPUT FORMAT:
+Line 1: Title in format "${commitType}: description"
+Line 2: (blank line)
+Lines 3+: Body with the 4 markdown sections
+
+Generate the PR description now:`;
 
   try {
     // Call Gemini API
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "text/plain",
@@ -132,26 +139,70 @@ Generate the PR description now in valid Markdown:`;
 
     const generatedText = response.text?.trim() || "";
 
-    // Extract title and body from generated text
-    const lines = generatedText.split("\n");
+    // Debug: Log raw response if needed
+    if (process.env.DEBUG_PR_GEN === "true") {
+      console.log("\n=== Raw AI Response ===");
+      console.log(generatedText);
+      console.log("=== End Raw Response ===\n");
+    }
+
+    // Remove markdown code blocks if present
+    let cleanText = generatedText;
+    if (cleanText.startsWith("```")) {
+      // Remove opening and closing code fences
+      cleanText = cleanText.replace(/^```(\w+)?\n/, "").replace(/\n```$/, "").trim();
+    }
+
+    // Split into lines
+    const lines = cleanText.split("\n");
     let title = "";
     let body = "";
 
-    // First non-empty line is the title
-    for (const line of lines) {
-      if (line.trim()) {
-        title = line.trim();
-        break;
+    // Find the title: first line that looks like a conventional commit title
+    const conventionalCommitPattern = /^(feat|fix|refactor|docs|style|test|chore|perf|ci):/;
+    let titleLineIndex = -1;
+
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i]?.trim() || "";
+      
+      // Skip empty lines and markdown code fences
+      if (!trimmed || trimmed.startsWith("```")) {
+        continue;
       }
+      
+      // Skip markdown headers (these are part of the body)
+      if (trimmed.startsWith("#")) {
+        continue;
+      }
+      
+      // This looks like a title
+      title = trimmed;
+      titleLineIndex = i;
+      break;
     }
 
-    // Rest is the body (skip the title line)
-    const titleIndex = lines.findIndex((l: string) => l.trim() === title);
-    body = lines.slice(titleIndex + 1).join("\n").trim();
+    // Extract body (everything after title, skipping blank lines)
+    if (titleLineIndex >= 0) {
+      const bodyLines = lines.slice(titleLineIndex + 1);
+      body = bodyLines.join("\n").trim();
+    } else {
+      // Fallback: no clear title found, treat first line as title
+      title = lines[0]?.trim() || "";
+      body = lines.slice(1).join("\n").trim();
+    }
 
     // Ensure title follows conventional commit format
-    if (!title.match(/^(feat|fix|refactor|docs|style|test|chore|perf|ci):/)) {
+    if (!conventionalCommitPattern.test(title)) {
+      // Title doesn't have the type prefix, add it
       title = `${commitType}: ${title}`;
+    }
+
+    // Validate we have both title and body
+    if (!title || !body) {
+      throw new Error(
+        `Failed to parse AI response into title and body. ` +
+        `Title: "${title}", Body length: ${body.length}`
+      );
     }
 
     // If title exceeds 256 chars, truncate
