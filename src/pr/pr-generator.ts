@@ -113,7 +113,7 @@ REQUIREMENTS:
    3-5 steps maximum
 
 CRITICAL:
-- DO NOT wrap the output in markdown code blocks (no ``` markers)
+- DO NOT wrap the output in markdown code blocks (no \`\`\` markers)
 - Return ONLY the title on the first line, followed by the body
 - Use descriptive BULLET POINTS only (no code blocks, no code snippets in the body)
 - Body must be Markdown formatted with ## headers
