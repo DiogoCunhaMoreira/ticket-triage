@@ -1,0 +1,355 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GitHub Pull Request API Contract",
+  "description": "Contract definition for GitHub REST API interactions required for PR automation feature",
+  "version": "1.0.0",
+  "definitions": {
+    "CreatePullRequestRequest": {
+      "type": "object",
+      "description": "Request payload for creating a pull request via GitHub REST API",
+      "required": ["title", "head", "base", "body"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "description": "The title of the pull request (conventional commit format)",
+          "example": "feat: Add automated PR creation"
+        },
+        "head": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The name of the branch where your changes are implemented (head branch)",
+          "example": "001-pr-automation"
+        },
+        "base": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The name of the branch you want the changes pulled into (base branch)",
+          "example": "main"
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 65536,
+          "description": "The contents of the pull request (Markdown formatted with Problem/Solution/Technical Details/Testing sections)",
+          "example": "## Problem\\n\\nDevelopers spend time manually writing PRs...\\n\\n## Solution\\n- Automate PR generation\\n..."
+        },
+        "draft": {
+          "type": "boolean",
+          "description": "Indicates whether the pull request is a draft",
+          "default": false
+        }
+      }
+    },
+    "PullRequestResponse": {
+      "type": "object",
+      "description": "Response from GitHub API after creating a pull request",
+      "required": ["id", "number", "state", "title", "body", "html_url", "created_at", "head", "base"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Unique identifier for the pull request",
+          "example": 123456789
+        },
+        "number": {
+          "type": "integer",
+          "description": "Pull request number (used in URLs like #42)",
+          "example": 42
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "closed"],
+          "description": "State of the pull request",
+          "example": "open"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the pull request",
+          "example": "feat: Add automated PR creation"
+        },
+        "body": {
+          "type": "string",
+          "description": "The body content of the pull request",
+          "example": "## Problem\\n\\nDevelopers spend time..."
+        },
+        "html_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "The HTML URL to view the pull request in browser",
+          "example": "https://github.com/user/repo/pull/42"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when PR was created",
+          "example": "2026-02-06T14:23:00Z"
+        },
+        "head": {
+          "type": "object",
+          "description": "Information about the head branch",
+          "properties": {
+            "ref": {
+              "type": "string",
+              "description": "Branch name",
+              "example": "001-pr-automation"
+            }
+          }
+        },
+        "base": {
+          "type": "object",
+          "description": "Information about the base branch",
+          "properties": {
+            "ref": {
+              "type": "string",
+              "description": "Branch name",
+              "example": "main"
+            }
+          }
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "Error response from GitHub API",
+      "required": ["message"],
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Error message from GitHub",
+          "example": "Validation Failed"
+        },
+        "errors": {
+          "type": "array",
+          "description": "Detailed error information",
+          "items": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+                "example": "PullRequest"
+              },
+              "field": {
+                "type": "string",
+                "example": "head"
+              },
+              "code": {
+                "type": "string",
+                "example": "invalid"
+              },
+              "message": {
+                "type": "string",
+                "example": "Head branch does not exist"
+              }
+            }
+          }
+        },
+        "documentation_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to API documentation",
+          "example": "https://docs.github.com/rest/pulls/pulls#create-a-pull-request"
+        }
+      }
+    },
+    "RepositoryResponse": {
+      "type": "object",
+      "description": "Response from GitHub API when fetching repository info",
+      "required": ["default_branch", "name", "owner"],
+      "properties": {
+        "default_branch": {
+          "type": "string",
+          "description": "The default branch name (usually 'main' or 'master')",
+          "example": "main"
+        },
+        "name": {
+          "type": "string",
+          "description": "Repository name",
+          "example": "ticket-agent"
+        },
+        "owner": {
+          "type": "object",
+          "properties": {
+            "login": {
+              "type": "string",
+              "description": "Repository owner username",
+              "example": "user"
+            }
+          }
+        }
+      }
+    },
+    "BranchResponse": {
+      "type": "object",
+      "description": "Response from GitHub API when fetching branch info (for validation)",
+      "required": ["name", "commit"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Branch name",
+          "example": "001-pr-automation"
+        },
+        "commit": {
+          "type": "object",
+          "properties": {
+            "sha": {
+              "type": "string",
+              "description": "Latest commit SHA on this branch",
+              "example": "abc123def456"
+            }
+          }
+        }
+      }
+    }
+  },
+  "endpoints": [
+    {
+      "operationId": "createPullRequest",
+      "method": "POST",
+      "path": "/repos/{owner}/{repo}/pulls",
+      "description": "Create a new pull request",
+      "authentication": "Bearer token (Personal Access Token with 'repo' scope)",
+      "headers": {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer <GITHUB_TOKEN>",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      "parameters": {
+        "owner": {
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "Repository owner"
+        },
+        "repo": {
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "Repository name"
+        }
+      },
+      "requestBody": {
+        "$ref": "#/definitions/CreatePullRequestRequest"
+      },
+      "responses": {
+        "201": {
+          "description": "Pull request created successfully",
+          "schema": {
+            "$ref": "#/definitions/PullRequestResponse"
+          }
+        },
+        "422": {
+          "description": "Validation failed (e.g., branch doesn't exist, PR already exists)",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        },
+        "401": {
+          "description": "Authentication failed (invalid or missing token)",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        },
+        "403": {
+          "description": "Permission denied (token lacks 'repo' scope)",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        },
+        "404": {
+          "description": "Repository not found",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        }
+      }
+    },
+    {
+      "operationId": "getRepository",
+      "method": "GET",
+      "path": "/repos/{owner}/{repo}",
+      "description": "Get repository information (including default branch)",
+      "authentication": "Bearer token (Personal Access Token)",
+      "headers": {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer <GITHUB_TOKEN>",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      "parameters": {
+        "owner": {
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        "repo": {
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Repository info retrieved successfully",
+          "schema": {
+            "$ref": "#/definitions/RepositoryResponse"
+          }
+        },
+        "404": {
+          "description": "Repository not found",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        }
+      }
+    },
+    {
+      "operationId": "getBranch",
+      "method": "GET",
+      "path": "/repos/{owner}/{repo}/branches/{branch}",
+      "description": "Get branch information (for validation that branch exists)",
+      "authentication": "Bearer token (Personal Access Token)",
+      "headers": {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer <GITHUB_TOKEN>",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      "parameters": {
+        "owner": {
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        "repo": {
+          "in": "path",
+          "required": true,
+          "type": "string"
+        },
+        "branch": {
+          "in": "path",
+          "required": true,
+          "type": "string",
+          "description": "Branch name to validate"
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Branch exists and info retrieved",
+          "schema": {
+            "$ref": "#/definitions/BranchResponse"
+          }
+        },
+        "404": {
+          "description": "Branch not found",
+          "schema": {
+            "$ref": "#/definitions/ErrorResponse"
+          }
+        }
+      }
+    }
+  ],
+  "notes": {
+    "rateLimit": "GitHub API has rate limits: 5000 requests/hour for authenticated requests, 60 for unauthenticated. PR creation is a write operation and counts against limits.",
+    "authentication": "Use Personal Access Token stored in GITHUB_TOKEN environment variable. Token must have 'repo' scope for private repositories or 'public_repo' for public repos only.",
+    "errorHandling": "Always check response status. 422 errors indicate validation failures (e.g., PR already exists between branches). Provide clear error messages to users.",
+    "implementation": "Use @octokit/rest library which wraps these endpoints with TypeScript types: octokit.rest.pulls.create(), octokit.rest.repos.get(), octokit.rest.repos.getBranch()"
+  }
+}
