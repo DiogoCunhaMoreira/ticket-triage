@@ -12,9 +12,13 @@ import type {
  */
 function execGit(command: string): string {
   try {
+    // On Windows, use PowerShell to avoid cmd.exe % character issues
+    const shellOption = process.platform === 'win32' ? 'powershell.exe' : undefined;
+    
     return execSync(`git ${command}`, {
       encoding: "utf-8",
-      stdio: ["pipe", "pipe", "pipe"],
+      shell: shellOption,
+      windowsHide: true,
     }).trim();
   } catch (error) {
     if (error instanceof Error && "status" in error) {
@@ -167,8 +171,9 @@ export function getChangedFiles(base: string, head: string): FileChange[] {
  * T007: Get commit messages between two branches
  */
 export function getCommitMessages(base: string, head: string): CommitInfo[] {
+  // Use single quotes for format string (works cross-platform)
   const logOutput = execGit(
-    `log ${base}..${head} --format=%H|%s|%an|%aI --no-merges`
+    `log ${base}..${head} --format='%H|%s|%an|%aI' --no-merges`
   );
 
   if (!logOutput) {
